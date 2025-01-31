@@ -15,163 +15,62 @@
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
-        html, body, #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
+            html, body {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            /* Hide the map container until login is successful */
+            #map-container {
+                display: none;
+                width: 100%;
+                height: 100vh;
+            }
+
+            /* Ensure the map fills its container */
+            #map {
+                width: 100%;
+                height: 100%;
+            }
+            #logout-button {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                z-index: 1000;  /* Ensure it appears above the map */
+                background-color: #ff4d4d; /* Red button for visibility */
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+            #logout-button:hover {
+                background-color: #cc0000;
+            }
+
         </style>
         <title>Alabama Community College Fiber Proposal (Test)</title>
     </head>
     <body>
-    <!-- Authentication UI -->
-    <div id="login-container">
-        <input type="email" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button onclick="login()">Login</button>
-        <button onclick="logout()">Logout</button>
-    </div>
 
-    <!-- Map Container (Initially Hidden) -->
-    <div id="map-container" style="display: none;">
-        <div id="map"></div>
-    </div>
+        <!-- Authentication UI -->
+        <div id="login-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+            <h2>Login</h2>
+            <input type="email" id="email" placeholder="Enter email">
+            <input type="password" id="password" placeholder="Enter password">
+            <button onclick="login()">Login</button>
+            <button onclick="logout()">Logout</button>
+            <p id="status"></p>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const { createClient } = supabase;
-
-        const SUPABASE_URL = "https://your-project.supabase.co";  // Replace with your actual Supabase URL
-        const SUPABASE_ANON_KEY = "your-anon-key";  // Replace with your actual Supabase ANON key
-
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function login() {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-
-            let { data, error } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (error) {
-                alert("Login failed: " + error.message);
-            } else {
-                checkAuth();
-            }
-        }
-
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
-        }
-
-        async function checkAuth() {
-            console.log("Running checkAuth()...");
-
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
-
-            if (error) {
-                console.error("Error fetching session:", error.message);
-                return;
-            }
-
-            console.log("Session data:", session);
-
-            if (session) {
-                console.log("User is authenticated, showing map.");
-                document.getElementById("login-container").style.display = "none";
-                document.getElementById("map-container").style.display = "block";
-                loadMap();
-            } else {
-                console.log("User is not authenticated, showing login form.");
-                document.getElementById("login-container").style.display = "block";
-                document.getElementById("map-container").style.display = "none";
-            }
-        }
-
-        function loadMap() {
-            var map = L.map('map', {
-                zoomControl: true,
-                maxZoom: 28,
-                minZoom: 1
-            }).fitBounds([[29.915514898496983, -88.55512038890942], [35.032811123552676, -81.39318880576221]]);
-
-            var layer_ESRIWorldLightGray_1 = L.tileLayer(
-                'http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-                { opacity: 1.0, minZoom: 1, maxZoom: 28, minNativeZoom: 0, maxNativeZoom: 19 }
-            );
-
-            map.addLayer(layer_ESRIWorldLightGray_1);
-        }
-
-        // Ensure checkAuth() runs when the page loads
-        document.addEventListener("DOMContentLoaded", checkAuth);
-    </script>
-    
-    <!-- Authentication UI -->
-    <div id="login-container">
-        <input type="email" id="email" placeholder="Enter email">
-        <input type="password" id="password" placeholder="Enter password">
-        <button onclick="login()">Login</button>
-        <button onclick="logout()">Logout</button>
-    </div>
-
-    <!-- Map Container (Initially Hidden) -->
-    <div id="map-container" style="display: none;">
-        <div id="map"></div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const { createClient } = supabase;
-        const SUPABASE_URL = "https://drbstbhuqlbrdjelivna.supabase.co";  // Replace with your actual Supabase URL
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyYnN0Ymh1cWxicmRqZWxpdm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxOTQ2NzgsImV4cCI6MjA1Mzc3MDY3OH0.PcCju-ihyJSfYp-daa5jweMEXXt1R0oWQBZewYQGNSg";  // Replace with your actual Supabase ANON key
-
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function login() {
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-
-            let { data, error } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (error) {
-                alert("Login failed: " + error.message);
-            } else {
-                checkAuth();
-            }
-        }
-
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
-        }
-
-        async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-
-            if (session) {
-                document.getElementById("login-container").style.display = "none";
-                document.getElementById("map-container").style.display = "block";
-                loadMap();
-            } else {
-                document.getElementById("login-container").style.display = "block";
-                document.getElementById("map-container").style.display = "none";
-            }
-        }
-
-        // Run authentication check on page load
-        document.addEventListener("DOMContentLoaded", checkAuth);
-
-    </script>
-    
-        <div id="map">
+        <!-- Map Container (Initially Hidden) -->
+        <div id="map-container" style="display: none;">
+            <button id="logout-button" onclick="logout()">Logout</button>
+                <div id="map">
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -210,6 +109,10 @@
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[29.915514898496983,-88.55512038890942],[35.032811123552676,-81.39318880576221]]);
+        setTimeout(() => {
+            map.invalidateSize(); // Fix Leaflet rendering issues
+            map.fitBounds([[29.915514898496983,-88.55512038890942],[35.032811123552676,-81.39318880576221]]);
+        }, 200);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -1045,5 +948,93 @@
             };
             div_name.appendChild(reset_name);
         </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const { createClient } = supabase;
+        const SUPABASE_URL = "https://drbstbhuqlbrdjelivna.supabase.co";  // Replace with your actual Supabase URL
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyYnN0Ymh1cWxicmRqZWxpdm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxOTQ2NzgsImV4cCI6MjA1Mzc3MDY3OH0.PcCju-ihyJSfYp-daa5jweMEXXt1R0oWQBZewYQGNSg";  // Replace with your actual Supabase ANON key
+
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            let { data, error } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                document.getElementById("status").innerText = "Login failed: " + error.message;
+            } else {
+                document.getElementById("status").innerText = "Login successful!";
+                checkAuth();
+            }
+        }
+
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            document.getElementById("status").innerText = "Logged out";
+        }
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            console.log("Session data:", session);
+
+            if (session) {
+                console.log("User is authenticated, showing map.");
+
+                // Hide login form
+                document.getElementById("login-container").style.display = "none";
+                
+                // Show map container
+                let mapContainer = document.getElementById("map-container");
+                if (mapContainer) {
+                    mapContainer.style.display = "block";
+                } else {
+                    console.error("Map container not found!");
+                    return;
+                }
+
+                // Ensure Leaflet map initializes correctly
+                setTimeout(() => {
+                    map.invalidateSize();  // Fix Leaflet rendering issues
+                    map.fitBounds([[29.915514898496983,-88.55512038890942],[35.032811123552676,-81.39318880576221]]);
+                }, 200);
+            } else {
+                console.log("User is not authenticated, showing login form.");
+                
+                // Show login form again
+                document.getElementById("login-container").style.display = "flex";
+
+                // Hide map container
+                let mapContainer = document.getElementById("map-container");
+                if (mapContainer) {
+                    mapContainer.style.display = "none";
+                }
+            }
+        }
+
+        // Ensure authentication check runs when the page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Page loaded, checking auth...");
+            checkAuth();
+        });
+
+        // Listen for authentication state changes
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            console.log("Auth state changed:", event);
+            console.log("Updated session:", session);
+            checkAuth(); // Re-run auth check when session updates
+        });
+
+
+        // Run authentication check on page load
+        document.addEventListener("DOMContentLoaded", checkAuth);
+    </script>
+
     </body>
+</html>    </body>
 </html>
