@@ -81,7 +81,8 @@
         }
 
         // Run authentication check on page load
-        checkAuth();
+        document.addEventListener("DOMContentLoaded", checkAuth);
+
     </script>
     
         <div id="map">
