@@ -25,6 +25,65 @@
         <title>Alabama Community College Fiber Proposal (Test)</title>
     </head>
     <body>
+    <!-- Authentication UI -->
+    <div id="login-container">
+        <input type="email" id="email" placeholder="Enter email">
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="login()">Login</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Map Container (Initially Hidden) -->
+    <div id="map-container" style="display: none;">
+        <div id="map"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const { createClient } = supabase;
+        const SUPABASE_URL = "https://drbstbhuqlbrdjelivna.supabase.co";  // Replace with your actual Supabase URL
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyYnN0Ymh1cWxicmRqZWxpdm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxOTQ2NzgsImV4cCI6MjA1Mzc3MDY3OH0.PcCju-ihyJSfYp-daa5jweMEXXt1R0oWQBZewYQGNSg";  // Replace with your actual Supabase ANON key
+
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            let { data, error } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                alert("Login failed: " + error.message);
+            } else {
+                checkAuth();
+            }
+        }
+
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (session) {
+                document.getElementById("login-container").style.display = "none";
+                document.getElementById("map-container").style.display = "block";
+                loadMap();
+            } else {
+                document.getElementById("login-container").style.display = "block";
+                document.getElementById("map-container").style.display = "none";
+            }
+        }
+
+        // Run authentication check on page load
+        checkAuth();
+    </script>
+    
         <div id="map">
         </div>
         <script src="js/qgis2web_expressions.js"></script>
